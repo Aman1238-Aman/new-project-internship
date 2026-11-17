@@ -1,0 +1,11 @@
+import { Router } from 'express';
+import * as controller from '../controllers/taskController.js';
+import { taskBody, taskIdParam, taskQuery, statusBody } from '../validators/taskValidator.js';
+import { validate } from '../middleware/validate.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
+const router=Router();
+router.get('/export.csv',taskQuery,validate,asyncHandler(controller.exportCsv));
+router.route('/').get(taskQuery,validate,asyncHandler(controller.list)).post(taskBody,validate,asyncHandler(controller.create));
+router.put('/:id/status',[...taskIdParam,...statusBody],validate,asyncHandler(controller.status));
+router.route('/:id').get(taskIdParam,validate,asyncHandler(controller.get)).put([...taskIdParam,...taskBody],validate,asyncHandler(controller.update)).delete(taskIdParam,validate,asyncHandler(controller.remove));
+export default router;
